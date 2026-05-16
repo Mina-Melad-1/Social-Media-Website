@@ -32,7 +32,7 @@
                         <input type="file" class="absolute left-0 top-0 bottom-0 right-0 opacity-0"
                                @change="onCoverChange"/>
                     </button>
-                    <div v-else class="flex gap-2 bg-white p-2 opacity-0 group-hover:opacity-100">
+                    <div v-else class="flex gap-2">
                         <button
                             @click="cancelCoverImage"
                             class="bg-gray-50 hover:bg-gray-100 text-gray-800 py-1 px-2 text-xs flex items-center">
