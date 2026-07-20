@@ -60,7 +60,7 @@
             </button>
             <button
               @click="submitCoverImage"
-              class="bg-emerald-600 hover:bg-emerald-700 text-gray-100 py-1 px-2 text-xs flex items-center"
+              class="bg-emerald-600 hover:bg-emerald-700 text-white py-1 px-2 text-xs flex items-center"
             >
               <CheckCircleIcon class="h-3 w-3 mr-2" />
               Submit

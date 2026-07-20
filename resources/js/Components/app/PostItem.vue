@@ -1,149 +1,162 @@
 <script setup>
-import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
+import {Menu, MenuButton, MenuItems, MenuItem} from '@headlessui/vue'
+import {PencilIcon, TrashIcon, EllipsisVerticalIcon} from '@heroicons/vue/20/solid'
+import {Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue'
+import {ref} from "vue";
+import PostUserHeader from "@/Components/app/PostUserHeader.vue";
 
-defineProps({
-  post: Object,
-});
+const props = defineProps({
+    post: Object
+})
+
+const emit = defineEmits(['editClick'])
 
 function isImage(attachment) {
-  const mime = attachment.mime.split("/");
-  return mime[0].toLowerCase() === "image";
+    const mime = attachment.mime.split('/')
+    return mime[0].toLowerCase() === 'image'
 }
+
+function openEditModal(){
+    emit('editClick', props.post)
+}
+
 </script>
 
 <template>
-  <div class="bg-white border rounded p-4 mb-4">
-    <div class="flex items-center gap-2 mb-2">
-      <a href="javascript:void(0)">
-        <img
-          :src="post.user.avatar_url"
-          alt="User Avatar"
-          class="w-10 h-10 rounded-full border border-2 transition-all hover:ring-2 hover:ring-blue-500"
-        />
-      </a>
-      <div>
-        <h3 class="font-bold">
-          <a href="javascript:void(0)" class="hover:underline">{{ post.user.name }}</a>
+    <div class="bg-white border rounded p-4 mb-3">
+        <div class="flex items-center justify-between mb-3">
+            <PostUserHeader :post="post"/>
+            <Menu as="div" class="relative inline-block text-left">
+                <div>
+                    <MenuButton
+                        class="w-8 h-8 rounded-full hover:bg-black/5 transition flex items-center justify-center"
+                    >
 
-          <template v-if="post.group">
-            >
-            <a href="javascript:void(0)" class="hover:underline">{{ post.group.name }}</a>
-          </template>
-        </h3>
-        <p class="text-sm text-gray-500">{{ post.created_at }}</p>
-      </div>
-    </div>
+                        <EllipsisVerticalIcon
+                            class="w-5 h-5"
+                            aria-hidden="true"
+                        />
+                    </MenuButton>
+                </div>
 
-    <div class="mb-3">
-      <Disclosure v-slot="{ open }">
-        <div
-          v-if="!open"
-          v-html="post.body.substring(0, 200)"
-        ></div>
-        <template v-if="post.body.length > 200" >
-          <DisclosurePanel><div v-html="post.body"></div></DisclosurePanel>
-          <div class="flex justify-end mt-2">
-            <DisclosureButton class="text-blue-500 hover:underline">
-              {{ open ? "Show Less" : "Show More" }}
-            </DisclosureButton>
-          </div>
-        </template>
-      </Disclosure>
-    </div>
-    <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
-      <template v-for="attachment of post.attachment" class="h-[160px]">
-        <div
-          class="group aspect-square bg-blue-100 flex flex-col items-center justify-center text-gray-600 relative"
-        >
-          <!-- Download Button -->
-          <button
-            class="opacity-0 group-hover:opacity-100 transition-all w-8 h-8 flex items-center justify-center text-gray-100 bg-gray-800 rounded absolute top-2 right-2 text-gray-600 cursor-pointer hover:bg-gray-700"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-4 h-4"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-              />
-            </svg>
-          </button>
-
-          <img
-            v-if="isImage(attachment)"
-            :src="attachment.url"
-            :alt="attachment.name"
-            class="object-cover aspect-square"
-          />
-          <template v-else>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-12 h-12 text-gray-500"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
-              />
-            </svg>
-
-            <small>{{ attachment.name }}</small>
-          </template>
+                <transition
+                    enter-active-class="transition duration-100 ease-out"
+                    enter-from-class="transform scale-95 opacity-0"
+                    enter-to-class="transform scale-100 opacity-100"
+                    leave-active-class="transition duration-75 ease-in"
+                    leave-from-class="transform scale-100 opacity-100"
+                    leave-to-class="transform scale-95 opacity-0"
+                >
+                    <MenuItems
+                        class="absolute right-0 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
+                    >
+                        <div class="px-1 py-1">
+                            <MenuItem v-slot="{ active }">
+                                <button
+                                    @click="openEditModal"
+                                    :class="[
+                  active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                  'group flex w-full items-center rounded-md px-2 py-2 text-sm',
+                ]"
+                                >
+                                    <PencilIcon
+                                        class="mr-2 h-5 w-5"
+                                        aria-hidden="true"
+                                    />
+                                    Edit
+                                </button>
+                            </MenuItem>
+                            <MenuItem v-slot="{ active }">
+                                <button
+                                    :class="[
+                  active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                  'group flex w-full items-center rounded-md px-2 py-2 text-sm',
+                ]"
+                                >
+                                    <TrashIcon
+                                        class="mr-2 h-5 w-5"
+                                        aria-hidden="true"
+                                    />
+                                    Delete
+                                </button>
+                            </MenuItem>
+                        </div>
+                    </MenuItems>
+                </transition>
+            </Menu>
         </div>
-      </template>
-    </div>
-    <div class="flex gap-2">
-      <button
-        class="flex items-center gap-1 mr-4 justify-center mt-2 py-2 px-4 flex-1 bg-gray-100 hover:bg-gray-200 rounded-lg"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="size-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282m0 0h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904m10.598-9.75H14.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 9.953 4.167 9.5 5 9.5h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665c0 1.194.232 2.333.654 3.375Z"
-          />
-        </svg>
+        <div class="mb-3">
+            <Disclosure v-slot="{ open }">
+                <div v-if="!open" v-html="post.body.substring(0, 200)"/>
+                <template v-if="post.body.length > 200">
+                    <DisclosurePanel>
+                        <div v-html="post.body"/>
+                    </DisclosurePanel>
+                    <div class="flex justify-end">
+                        <DisclosureButton class="text-blue-500 hover:underline">
+                            {{ open ? 'Read less' : 'Read More' }}
+                        </DisclosureButton>
+                    </div>
+                </template>
+            </Disclosure>
+        </div>
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
+            <template v-for="attachment of post.attachments">
 
-        Like
-      </button>
-      <button
-        class="flex items-center gap-1 justify-center flex-1 bg-gray-100 hover:bg-gray-200 mt-2 py-2 px-4 rounded-lg"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="size-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"
-          />
-        </svg>
-        Comment
-      </button>
+                <div
+                    class="group aspect-square bg-blue-100 flex flex-col items-center justify-center text-gray-500 relative">
+                    <!-- Download-->
+                    <button
+                        class="opacity-0 group-hover:opacity-100 transition-all w-8 h-8 flex items-center justify-center text-gray-100 bg-gray-700 rounded absolute right-2 top-2 cursor-pointer hover:bg-gray-800">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                             class="w-4 h-4">
+                            <path fill-rule="evenodd"
+                                  d="M12 2.25a.75.75 0 01.75.75v11.69l3.22-3.22a.75.75 0 111.06 1.06l-4.5 4.5a.75.75 0 01-1.06 0l-4.5-4.5a.75.75 0 111.06-1.06l3.22 3.22V3a.75.75 0 01.75-.75zm-9 13.5a.75.75 0 01.75.75v2.25a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5V16.5a.75.75 0 011.5 0v2.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V16.5a.75.75 0 01.75-.75z"
+                                  clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                    <!--/ Download-->
+
+                    <img v-if="isImage(attachment)"
+                         :src="attachment.url"
+                         class="object-cover aspect-square"/>
+                    <template v-else>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                             class="w-12 h-12">
+                            <path
+                                d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625z"/>
+                            <path
+                                d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z"/>
+                        </svg>
+
+                        <small>{{ attachment.name }}</small>
+                    </template>
+                </div>
+            </template>
+        </div>
+        <div class="flex gap-2">
+            <button
+                class="text-gray-800 flex gap-1 items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 py-2 px-4 flex-1">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path
+                        d="M7.493 18.75c-.425 0-.82-.236-.975-.632A7.48 7.48 0 016 15.375c0-1.75.599-3.358 1.602-4.634.151-.192.373-.309.6-.397.473-.183.89-.514 1.212-.924a9.042 9.042 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75 2.25 2.25 0 012.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H14.23c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23h-.777zM2.331 10.977a11.969 11.969 0 00-.831 4.398 12 12 0 00.52 3.507c.26.85 1.084 1.368 1.973 1.368H4.9c.445 0 .72-.498.523-.898a8.963 8.963 0 01-.924-3.977c0-1.708.476-3.305 1.302-4.666.245-.403-.028-.959-.5-.959H4.25c-.832 0-1.612.453-1.918 1.227z"/>
+                </svg>
+                Like
+            </button>
+            <button
+                class="text-gray-800 flex gap-1 items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 py-2 px-4 flex-1">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path
+                        d="M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 00-1.032-.211 50.89 50.89 0 00-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 002.433 3.984L7.28 21.53A.75.75 0 016 21v-4.03a48.527 48.527 0 01-1.087-.128C2.905 16.58 1.5 14.833 1.5 12.862V6.638c0-1.97 1.405-3.718 3.413-3.979z"/>
+                    <path
+                        d="M15.75 7.5c-1.376 0-2.739.057-4.086.169C10.124 7.797 9 9.103 9 10.609v4.285c0 1.507 1.128 2.814 2.67 2.94 1.243.102 2.5.157 3.768.165l2.782 2.781a.75.75 0 001.28-.53v-2.39l.33-.026c1.542-.125 2.67-1.433 2.67-2.94v-4.286c0-1.505-1.125-2.811-2.664-2.94A49.392 49.392 0 0015.75 7.5z"/>
+                </svg>
+                Comment
+            </button>
+        </div>
     </div>
-  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>

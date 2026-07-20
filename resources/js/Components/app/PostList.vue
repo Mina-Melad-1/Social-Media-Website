@@ -1,74 +1,81 @@
 <script setup>
-import PostItem from "./PostItem.vue";
+import PostItem from "@/Components/app/PostItem.vue";
+import PostModel from "@/Components/app/PostModel.vue";
+import {ref} from "vue";
 
 defineProps({
-
-  posts: Array
-
+    posts: Array
 })
 
+const showEditModal = ref(false)
+const editPost = ref({})
+
+function openEditModal(post) {
+    editPost.value = post;
+    showEditModal.value = true;
+}
+
 const post1 = {
-  user: {
-    id: 1,
-    avatar: "https://i.pravatar.cc/150?img=1",
-    name: "John Doe",
-  },
-  group: null,
-  attachment: [
-    {
-      id: 1,
-      name: "image1.jpg",
-      url: "https://picsum.photos/1000",
-      mime: "image/jpeg",
+    user: {
+        id: 1,
+        avatar: 'https://randomuser.me/api/portraits/men/79.jpg',
+        name: 'John Smith'
     },
-    {
-      id: 2,
-      name: "image2.jpg",
-      url: "https://picsum.photos/1000",
-      mime: "image/jpeg",
-    },
-    {
-      id: 3,
-      name: "document.docs",
-      url: "https://example.com/document.pdf",
-      mime: "application/docs",
-    },
-  ],
-  body: `
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    group: null,
+    attachments: [
+        {
+            id: 1,
+            name: 'test.png',
+            url: 'https://picsum.photos/1000',
+            mime: 'image/png'
+        },
+        {
+            id: 2,
+            name: 'test2.png',
+            url: 'https://picsum.photos/1000',
+            mime: 'image/png'
+        },
+        {
+            id: 3,
+            name: 'MyDocument.docx',
+            url: '#',
+            mime: 'application/msword'
+        }
+    ],
+    body: `
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aspernatur aut, consequatur cum cupiditate dicta dolores dolorum facere fugit harum labore minima necessitatibus nobis pariatur provident, quia sequi sint voluptatibus.</p>
 
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aspernatur aut, consequatur cum cupiditate dicta dolores dolorum facere fugit harum labore minima necessitatibus nobis pariatur provident, quia sequi sint voluptatibus.</p>
     `,
-  created_at: "2024-06-01 15:12",
-};
-
+    created_at: '2023-11-19 15:12'
+}
 const post2 = {
-  user: {
-    id: 2,
-    avatar: "https://i.pravatar.cc/150?img=2",
-    name: "Jane Smith",
-  },
-  group: {
-    id: 1,
-    name: "Vue.js Enthusiasts",
-  },
-  body: `
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    user: {
+        id: 1,
+        avatar: 'https://randomuser.me/api/portraits/men/78.jpg',
+        name: 'James Does'
+    },
+    group: {
+        id: 1,
+        name: 'Laravel Developers'
+    },
+    body: `
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aspernatur aut, consequatur cum cupiditate dicta dolores dolorum facere fugit harum labore minima necessitatibus nobis pariatur provident, quia sequi sint voluptatibus.</p>
 
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aspernatur aut, consequatur cum cupiditate dicta dolores dolorum facere fugit harum labore minima necessitatibus nobis pariatur provident, quia sequi sint voluptatibus.</p>
     `,
-  created_at: "2024-06-01 15:12",
-};
+    created_at: '2023-11-19 15:12'
+}
 </script>
 
 <template>
-  <div class="overflow-auto h-full">
-    <PostItem v-for="post of posts" :key="post.id" :post="post" />
-  </div>
+    <div class="overflow-auto">
+        <PostItem v-for="post of posts" :key="post.id" :post="post" @editClick="openEditModal"/>
+
+        <PostModel :post="editPost" v-model="showEditModal"/>
+    </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>
