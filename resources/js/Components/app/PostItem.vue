@@ -16,7 +16,7 @@ function isImage(attachment) {
     <div class="flex items-center gap-2 mb-2">
       <a href="javascript:void(0)">
         <img
-          :src="post.user.avatar"
+          :src="post.user.avatar_url"
           alt="User Avatar"
           class="w-10 h-10 rounded-full border border-2 transition-all hover:ring-2 hover:ring-blue-500"
         />
@@ -36,21 +36,26 @@ function isImage(attachment) {
 
     <div class="mb-3">
       <Disclosure v-slot="{ open }">
-        <div v-if="!open" v-html="post.body.substring(0, 100)"></div>
-        <DisclosurePanel><div v-html="post.body"></div></DisclosurePanel>
-        <div class="flex justify-end mt-2">
-          <DisclosureButton class="text-blue-500 hover:underline">
-            {{ open ? "Show Less" : "Show More" }}
-          </DisclosureButton>
-        </div>
+        <div
+          v-if="!open"
+          v-html="post.body.substring(0, 200)"
+        ></div>
+        <template v-if="post.body.length > 200" >
+          <DisclosurePanel><div v-html="post.body"></div></DisclosurePanel>
+          <div class="flex justify-end mt-2">
+            <DisclosureButton class="text-blue-500 hover:underline">
+              {{ open ? "Show Less" : "Show More" }}
+            </DisclosureButton>
+          </div>
+        </template>
       </Disclosure>
     </div>
     <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
       <template v-for="attachment of post.attachment" class="h-[160px]">
         <div
-          class=" group aspect-square bg-blue-100 flex flex-col items-center justify-center text-gray-600 relative"
+          class="group aspect-square bg-blue-100 flex flex-col items-center justify-center text-gray-600 relative"
         >
-        <!-- Download Button -->
+          <!-- Download Button -->
           <button
             class="opacity-0 group-hover:opacity-100 transition-all w-8 h-8 flex items-center justify-center text-gray-100 bg-gray-800 rounded absolute top-2 right-2 text-gray-600 cursor-pointer hover:bg-gray-700"
           >
@@ -98,7 +103,9 @@ function isImage(attachment) {
       </template>
     </div>
     <div class="flex gap-2">
-      <button class="flex items-center gap-1 mr-4 justify-center mt-2 py-2 px-4 flex-1 bg-gray-100 hover:bg-gray-200 rounded-lg">
+      <button
+        class="flex items-center gap-1 mr-4 justify-center mt-2 py-2 px-4 flex-1 bg-gray-100 hover:bg-gray-200 rounded-lg"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -116,7 +123,9 @@ function isImage(attachment) {
 
         Like
       </button>
-      <button class="flex items-center gap-1 justify-center flex-1 bg-gray-100 hover:bg-gray-200 mt-2 py-2 px-4 rounded-lg">
+      <button
+        class="flex items-center gap-1 justify-center flex-1 bg-gray-100 hover:bg-gray-200 mt-2 py-2 px-4 rounded-lg"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
